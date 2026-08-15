@@ -12,13 +12,21 @@ function HostDashboard() {
     timePerQuestion: 15,
     operators: ['+', '-', '*', '/']
   });
+  const [isConnected, setIsConnected] = useState(socket.connected);
 
   useEffect(() => {
+    const onConnect = () => setIsConnected(true);
+    const onDisconnect = () => setIsConnected(false);
+    
+    socket.on('connect', onConnect);
+    socket.on('disconnect', onDisconnect);
     socket.on('updatePlayers', (updatedPlayers) => {
       setPlayers(updatedPlayers);
     });
 
     return () => {
+      socket.off('connect', onConnect);
+      socket.off('disconnect', onDisconnect);
       socket.off('updatePlayers');
     };
   }, []);
@@ -148,8 +156,13 @@ function HostDashboard() {
           </div>
         </div>
 
-        <button className="btn btn-primary" style={{ width: '100%', marginTop: '1rem' }} onClick={handleCreateRoom}>
-          ➕ สร้างห้อง
+        <button 
+          className="btn btn-primary" 
+          style={{ width: '100%', marginTop: '1rem', opacity: isConnected ? 1 : 0.6 }} 
+          onClick={handleCreateRoom}
+          disabled={!isConnected}
+        >
+          {isConnected ? '➕ สร้างห้อง' : '⏳ กำลังเชื่อมต่อเซิร์ฟเวอร์...'}
         </button>
         <button 
           className="btn" 

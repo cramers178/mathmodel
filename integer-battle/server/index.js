@@ -2,10 +2,18 @@ import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { generateQuestion } from './gameLogic.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 app.use(cors());
+
+// Serve static frontend files if they exist (for production/deployment)
+app.use(express.static(path.join(__dirname, '../dist')));
 
 const server = http.createServer(app);
 const io = new Server(server, {
@@ -217,7 +225,12 @@ io.on('connection', (socket) => {
   };
 });
 
+// Catch-all route to serve the React app for any other path
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../dist/index.html'));
+});
+
 const PORT = process.env.PORT || 4000;
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log(`Socket.IO Server running on port ${PORT}`);
 });
