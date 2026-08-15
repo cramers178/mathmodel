@@ -29,7 +29,7 @@ function FinalResults() {
   return (
     <div className="view-container">
       <div className="card animate-slide-in" style={{ width: '100%', maxWidth: '900px' }}>
-        <h1 className="title-main" style={{ fontSize: '4rem', marginBottom: '1rem' }}>🏆 FINAL LEADERBOARD</h1>
+        <h1 className="title-main" style={{ fontSize: '3rem', marginBottom: '1rem' }}>🏆 สรุปผลคะแนน ลำดับและอนุกรม ม.5</h1>
         <h3 style={{ textAlign: 'center', color: 'var(--text-muted)', marginBottom: '2rem' }}>ห้อง: {roomCode}</h3>
 
         <div style={{ overflowX: 'auto' }}>

@@ -66,7 +66,7 @@ function PlayerLobby() {
   return (
     <div className="view-container">
       <div className="card text-center animate-slide-in" style={{ maxWidth: '500px', width: '100%' }}>
-        <h2 style={{ marginBottom: '2rem', fontSize: '2.5rem' }}>🎮 เข้าร่วมเกม</h2>
+        <h2 style={{ marginBottom: '2rem', fontSize: '2.5rem' }}>🎮 เข้าร่วมเกมลำดับและอนุกรม</h2>
         
         <form onSubmit={handleJoin}>
           <input 

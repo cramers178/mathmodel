@@ -10,7 +10,7 @@ function HostDashboard() {
   const [settings, setSettings] = useState({
     questionCount: 15,
     timePerQuestion: 15,
-    operators: ['+', '-', '*', '/']
+    categories: ['arithmetic_seq', 'geometric_seq', 'arithmetic_series', 'geometric_series']
   });
   const [isConnected, setIsConnected] = useState(socket.connected);
 
@@ -47,14 +47,14 @@ function HostDashboard() {
     navigate('/host/game', { state: { roomCode, settings } });
   };
 
-  const handleToggleOperator = (op) => {
+  const handleToggleCategory = (cat) => {
     setSettings(prev => {
-      const ops = prev.operators.includes(op)
-        ? prev.operators.filter(o => o !== op)
-        : [...prev.operators, op];
+      const cats = prev.categories.includes(cat)
+        ? prev.categories.filter(c => c !== cat)
+        : [...prev.categories, cat];
       // Prevent unchecking all
-      if (ops.length === 0) return prev;
-      return { ...prev, operators: ops };
+      if (cats.length === 0) return prev;
+      return { ...prev, categories: cats };
     });
   };
 
@@ -136,21 +136,21 @@ function HostDashboard() {
         </div>
 
         <div className="settings-group">
-          <label>ประเภทโจทย์</label>
+          <label>หัวข้อที่ใช้ทดสอบ</label>
           <div className="checkbox-group">
             {[
-              { id: '+', label: '➕ บวก' },
-              { id: '-', label: '➖ ลบ' },
-              { id: '*', label: '✖️ คูณ' },
-              { id: '/', label: '➗ หาร' }
-            ].map(op => (
-              <label key={op.id} className="checkbox-label">
+              { id: 'arithmetic_seq', label: 'ลำดับเลขคณิต' },
+              { id: 'geometric_seq', label: 'ลำดับเรขาคณิต' },
+              { id: 'arithmetic_series', label: 'อนุกรมเลขคณิต' },
+              { id: 'geometric_series', label: 'อนุกรมเรขาคณิต' }
+            ].map(cat => (
+              <label key={cat.id} className="checkbox-label" style={{ fontSize: '1.2rem', padding: '0.5rem' }}>
                 <input 
                   type="checkbox" 
-                  checked={settings.operators.includes(op.id)}
-                  onChange={() => handleToggleOperator(op.id)}
+                  checked={settings.categories.includes(cat.id)}
+                  onChange={() => handleToggleCategory(cat.id)}
                 />
-                {op.label}
+                {cat.label}
               </label>
             ))}
           </div>

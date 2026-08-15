@@ -83,7 +83,7 @@ function GameActive() {
   return (
     <div className="view-container" style={{ justifyContent: 'flex-start', paddingTop: '2rem' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginBottom: '2rem', alignItems: 'center' }}>
-        <h2 style={{ color: 'var(--text-muted)' }}>INTEGER BATTLE</h2>
+        <h2 style={{ color: 'var(--text-muted)', fontSize: '1.2rem' }}>ลำดับและอนุกรม ม.5</h2>
         <h3 style={{ background: 'var(--dark-blue)', padding: '0.5rem 1.5rem', borderRadius: '1rem' }}>
           ข้อที่ {questionData.index} / {questionData.total}
         </h3>
@@ -109,13 +109,33 @@ function GameActive() {
         </div>
       )}
 
+      {isTimeUp && questionData?.explanation && (
+        <div className="animate-slide-in" style={{ 
+          background: 'rgba(255,255,255,0.1)', 
+          padding: '1.5rem', 
+          borderRadius: '1rem', 
+          marginBottom: '1rem',
+          textAlign: 'left',
+          width: '100%',
+          maxWidth: '800px',
+          whiteSpace: 'pre-line'
+        }}>
+          <h3 style={{ color: 'var(--yellow)', marginBottom: '0.5rem' }}>เฉลยและวิธีทำ:</h3>
+          <div style={{ fontSize: '1.2rem', lineHeight: '1.5' }}>
+            {questionData.explanation}
+          </div>
+        </div>
+      )}
+
       {answerStatus && !isTimeUp && (
         <div className="animate-slide-in" style={{ textAlign: 'center', marginBottom: '1rem' }}>
           <h2 style={{ color: 'var(--yellow)', fontSize: '1.5rem' }}>รอกลุ่มเพื่อนตอบ...</h2>
         </div>
       )}
 
-      <div className="question-text">{questionData.question}</div>
+      <div className="question-text" style={{ fontSize: questionData.question.length > 50 ? '2rem' : '3rem', whiteSpace: 'pre-line' }}>
+        {questionData.question}
+      </div>
 
       <div className="grid-4" style={{ marginTop: 'auto', marginBottom: '2rem' }}>
         {questionData.options.map((opt, i) => {

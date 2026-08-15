@@ -43,7 +43,7 @@ io.on('connection', (socket) => {
     const roomCode = generateRoomCode();
     rooms[roomCode] = {
       hostId: socket.id,
-      settings: settings || { questionCount: 15, timePerQuestion: 15, operators: ['+', '-', '*', '/'] },
+      settings: settings || { questionCount: 15, timePerQuestion: 15, categories: ['arithmetic_seq', 'geometric_seq', 'arithmetic_series', 'geometric_series'] },
       players: {}, // socketId -> { name, score, correct, totalAnswered, answers: {} }
       state: 'lobby', // lobby, playing, results
       currentQuestion: null,
@@ -181,7 +181,7 @@ io.on('connection', (socket) => {
     const room = rooms[roomCode];
     if (room.intervalId) clearInterval(room.intervalId);
     
-    room.currentQuestion = generateQuestion(room.settings.operators);
+    room.currentQuestion = generateQuestion(room.settings.categories);
     room.timeLeft = room.settings.timePerQuestion;
 
     const questionPayload = {
@@ -189,7 +189,9 @@ io.on('connection', (socket) => {
       total: room.settings.questionCount,
       question: room.currentQuestion.question,
       options: room.currentQuestion.options,
-      timePerQuestion: room.settings.timePerQuestion
+      timePerQuestion: room.settings.timePerQuestion,
+      explanation: room.currentQuestion.explanation,
+      category: room.currentQuestion.category
     };
 
     io.to(roomCode).emit('newQuestion', questionPayload);

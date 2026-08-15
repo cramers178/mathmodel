@@ -7,8 +7,8 @@ function Home() {
   return (
     <div className="view-container">
       <div className="card text-center animate-slide-in" style={{ maxWidth: '600px', width: '100%' }}>
-        <h1 className="title-main" style={{ fontSize: '3rem', marginBottom: '1rem' }}>INTEGER BATTLE</h1>
-        <h2 style={{ color: 'var(--yellow)', marginBottom: '3rem' }}>ศึกบวก ลบ คูณ หาร จำนวนเต็ม</h2>
+        <h1 className="title-main" style={{ fontSize: '3rem', marginBottom: '1rem' }}>ลำดับและอนุกรม ม.5</h1>
+        <h2 style={{ color: 'var(--yellow)', marginBottom: '3rem' }}>คณิตศาสตร์ ม.5 — เกมตอบคำถามออนไลน์</h2>
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
           <button 

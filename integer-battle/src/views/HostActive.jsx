@@ -79,12 +79,19 @@ function HostActive() {
           {isTimeUp ? '0' : timeLeft}
         </div>
 
-        <div className="question-text" style={{ fontSize: '5rem' }}>{questionData.question}</div>
+        <div className="question-text" style={{ fontSize: questionData.question.length > 50 ? '3rem' : '4rem', whiteSpace: 'pre-line' }}>{questionData.question}</div>
 
         {isTimeUp && (
-          <div className="animate-slide-in" style={{ textAlign: 'center', marginBottom: '2rem', background: 'rgba(16, 185, 129, 0.2)', border: '2px solid var(--emerald)', padding: '1rem 3rem', borderRadius: '1rem' }}>
+          <div className="animate-slide-in" style={{ textAlign: 'center', marginBottom: '1rem', background: 'rgba(16, 185, 129, 0.2)', border: '2px solid var(--emerald)', padding: '1rem 3rem', borderRadius: '1rem' }}>
             <h3 style={{ color: 'var(--emerald)' }}>คำตอบที่ถูกต้อง</h3>
             <h1 style={{ fontSize: '4rem', color: 'white' }}>{correctAnswer}</h1>
+          </div>
+        )}
+
+        {isTimeUp && questionData?.explanation && (
+          <div className="animate-slide-in" style={{ textAlign: 'left', marginBottom: '2rem', background: 'rgba(255,255,255, 0.1)', padding: '1.5rem', borderRadius: '1rem', width: '100%', whiteSpace: 'pre-line' }}>
+            <h3 style={{ color: 'var(--yellow)', marginBottom: '0.5rem' }}>วิธีทำ:</h3>
+            <div style={{ fontSize: '1.5rem', lineHeight: '1.5' }}>{questionData.explanation}</div>
           </div>
         )}
 
