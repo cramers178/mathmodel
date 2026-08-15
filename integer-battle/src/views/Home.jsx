@@ -11,21 +11,39 @@ function Home() {
         <h2 style={{ color: 'var(--yellow)', marginBottom: '3rem' }}>คณิตศาสตร์ ม.5 — เกมตอบคำถามออนไลน์</h2>
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          <button 
-            className="btn btn-primary" 
-            style={{ padding: '1.5rem', fontSize: '1.5rem' }}
-            onClick={() => navigate('/player/join')}
-          >
-            🎮 PLAYER
-          </button>
+          <div style={{ display: 'flex', gap: '1rem', width: '100%' }}>
+            <button 
+              className="btn btn-primary" 
+              style={{ flex: 1, padding: '1.5rem', fontSize: '1.5rem' }}
+              onClick={() => navigate('/player/join')}
+            >
+              🎮 PLAYER
+            </button>
+            <button 
+              className="btn" 
+              style={{ flex: 1, padding: '1.5rem', fontSize: '1.5rem', background: 'var(--emerald)', color: 'white' }}
+              onClick={() => navigate('/exam')}
+            >
+              📝 EXAM
+            </button>
+          </div>
           
-          <button 
-            className="btn" 
-            style={{ background: 'var(--dark-blue)', color: 'white', border: '2px solid var(--purple)' }}
-            onClick={() => navigate('/host/login')}
-          >
-            👑 HOST
-          </button>
+          <div style={{ display: 'flex', gap: '1rem', width: '100%' }}>
+            <button 
+              className="btn" 
+              style={{ flex: 1, background: 'var(--dark-blue)', color: 'white', border: '2px solid var(--purple)' }}
+              onClick={() => navigate('/host/login')}
+            >
+              👑 HOST (GAME)
+            </button>
+            <button 
+              className="btn" 
+              style={{ flex: 1, background: 'var(--navy)', color: 'white', border: '2px solid var(--emerald)' }}
+              onClick={() => navigate('/admin/exam')}
+            >
+              🔒 ADMIN (EXAM)
+            </button>
+          </div>
         </div>
       </div>
     </div>

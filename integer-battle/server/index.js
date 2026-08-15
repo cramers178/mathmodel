@@ -5,6 +5,13 @@ import cors from 'cors';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { generateQuestion } from './gameLogic.js';
+import {
+  initExam, openExam, closeExam, pauseExam, resumeExam, 
+  startSession, recordAnswer, logEvent, submitExam, 
+  getExamStatus, getAllSessions, examState 
+} from './examManager.js';
+import { estimateTheta, calculateSEM, calculateScaleScore } from './irtEngine.js';
+import { saveExamResult } from './examDB.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -22,6 +29,9 @@ const io = new Server(server, {
     methods: ['GET', 'POST']
   }
 });
+
+// Initialize Exam System
+initExam().then(() => console.log('Exam system initialized with question pool.'));
 
 // Store rooms in memory
 // rooms[roomCode] = { hostId, settings, players: {}, state, currentQuestion, timer, currentQuestionIndex }
@@ -173,6 +183,98 @@ io.on('connection', (socket) => {
         io.to(roomCode).emit('updatePlayers', Object.values(room.players));
         io.to(room.hostId).emit('updateLeaderboard', getLeaderboard(room));
       }
+    }
+  });
+
+  // --- EXAM ADMIN EVENTS ---
+  socket.on('exam_admin_login', ({ password }, callback) => {
+    if (password === 'admin1234') { // Simple hardcoded admin pass
+      socket.join('exam_admin');
+      callback({ success: true, status: getExamStatus(), sessions: getAllSessions() });
+    } else {
+      callback({ success: false, error: 'Invalid password' });
+    }
+  });
+
+  socket.on('exam_open', () => {
+    openExam();
+    io.to('exam_admin').emit('exam_status_update', getExamStatus());
+  });
+
+  socket.on('exam_close', () => {
+    closeExam();
+    io.to('exam_admin').emit('exam_status_update', getExamStatus());
+    io.to('exam_students').emit('exam_forced_closed');
+  });
+
+  socket.on('exam_pause', () => {
+    pauseExam();
+    io.to('exam_admin').emit('exam_status_update', getExamStatus());
+    io.to('exam_students').emit('exam_paused');
+  });
+
+  socket.on('exam_resume', () => {
+    resumeExam();
+    io.to('exam_admin').emit('exam_status_update', getExamStatus());
+    io.to('exam_students').emit('exam_resumed');
+  });
+
+  // --- EXAM STUDENT EVENTS ---
+  socket.on('exam_start_session', ({ studentId, playerName }, callback) => {
+    try {
+      const session = startSession(studentId, playerName);
+      socket.join('exam_students');
+      socket.join(`exam_${studentId}`);
+      callback({ success: true, session });
+      io.to('exam_admin').emit('exam_sessions_update', getAllSessions());
+      io.to('exam_admin').emit('exam_status_update', getExamStatus());
+    } catch (err) {
+      callback({ success: false, error: err.message });
+    }
+  });
+
+  socket.on('exam_record_answer', ({ studentId, itemId, answer }, callback) => {
+    const success = recordAnswer(studentId, itemId, answer);
+    callback({ success });
+    if (success) {
+      io.to('exam_admin').emit('exam_sessions_update', getAllSessions());
+    }
+  });
+
+  socket.on('exam_log_event', ({ studentId, eventType, details }) => {
+    logEvent(studentId, eventType, details);
+    io.to('exam_admin').emit('exam_sessions_update', getAllSessions());
+  });
+
+  socket.on('exam_submit', ({ studentId }, callback) => {
+    const session = submitExam(studentId);
+    if (session) {
+      let responses = [];
+      let items = [];
+      session.form.forEach(item => {
+        let ans = session.answers[item.itemId];
+        responses.push(ans && ans.isCorrect ? 1 : 0);
+        items.push({ a: item.a, b: item.b });
+      });
+      
+      const theta = estimateTheta(responses, items);
+      const sem = calculateSEM(theta, items);
+      const scaleScore = calculateScaleScore(theta);
+      const accuracy = Math.round((responses.filter(r => r===1).length / items.length) * 100);
+
+      const result = {
+        studentId: session.studentId,
+        playerName: session.playerName,
+        theta, sem, scaleScore, accuracy,
+        suspiciousScore: session.suspiciousScore
+      };
+
+      saveExamResult(result);
+      callback({ success: true, result });
+      io.to('exam_admin').emit('exam_sessions_update', getAllSessions());
+      io.to('exam_admin').emit('exam_status_update', getExamStatus());
+    } else {
+      callback({ success: false });
     }
   });
 

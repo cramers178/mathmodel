@@ -10,6 +10,12 @@ import GameActive from './views/GameActive';
 import HostActive from './views/HostActive';
 import FinalResults from './views/FinalResults';
 
+// Exam Routes
+import ExamHome from './views/exam/ExamHome';
+import ExamActive from './views/exam/ExamActive';
+import ExamResult from './views/exam/ExamResult';
+import ExamControl from './views/admin/ExamControl';
+
 function App() {
   const [isConnected, setIsConnected] = useState(socket.connected);
 
@@ -45,6 +51,13 @@ function App() {
           <Route path="/player/join" element={<PlayerLobby />} />
           <Route path="/game" element={<GameActive />} />
           <Route path="/results" element={<FinalResults />} />
+          
+          {/* EXAM MODE ROUTES */}
+          <Route path="/exam" element={<ExamHome />} />
+          <Route path="/exam/active" element={<ExamActive />} />
+          <Route path="/exam/result" element={<ExamResult />} />
+          
+          <Route path="/admin/exam" element={<ExamControl />} />
         </Routes>
       </div>
     </Router>
